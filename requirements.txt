@@ -1,0 +1,7 @@
+chromadb
+fastapi
+uvicorn
+torch
+transformers
+pandas
+numpy
