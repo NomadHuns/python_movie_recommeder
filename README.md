@@ -13,3 +13,34 @@ print(len(vector), vector[:5])
 ```
 
 참고: 첫 실행 시 Hugging Face에서 모델을 다운로드하므로 시간이 걸릴 수 있습니다.
+
+## 벡터 DB에 저장하는 명령어
+```bash
+export PYTHONPATH=$PYTHONPATH:$(pwd)
+python3 utils/chroma_utils.py
+```
+
+## 영화 추천 API (`/test`)
+
+사용자가 영화 추천 질문을 쿼리 스트링으로 보내면, 벡터 검색을 통해 가장 유사한 영화 5개를 JSON 형태로 반환합니다.
+
+### 요청 예시
+```bash
+curl "http://localhost:8000/test?query=슬픈영화추천해줘"
+```
+
+### 응답 예시
+```json
+[
+  {
+    "title": "영화 제목",
+    "url": "http://...",
+    "genre": "드라마",
+    "country": "한국",
+    "year": "2024",
+    "synopsis": "영화 줄거리 요약...",
+    "similarity_score": 0.8542
+  },
+  ...
+]
+```

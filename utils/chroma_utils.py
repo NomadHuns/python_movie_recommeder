@@ -26,11 +26,16 @@ def save_movies_to_chroma(
     
     # 3. 컬렉션 생성 또는 가져오기
     try:
+        # 기존 컬렉션이 있는지 확인
+        existing_collection = client.get_collection(name=collection_name)
+        # 만약 데이터가 이미 있다면 삭제 여부를 결정하거나 (여기서는 일단 교체 방식을 유지하되 로깅 강화)
+        print(f"Collection '{collection_name}' already exists. Re-creating it to update data.")
         client.delete_collection(name=collection_name)
     except Exception:
         pass
     
     collection = client.create_collection(name=collection_name)
+    print(f"Collection '{collection_name}' created or re-created successfully.")
 
     # 4. 데이터 준비
     ids = []
@@ -38,7 +43,10 @@ def save_movies_to_chroma(
     metadatas = []
     documents = []
 
+    total_items = len(results)
+    print(f"Total items to process: {total_items}")
     for i, item in enumerate(results):
+        print(f"Processing item {i + 1}/{total_items}")
         ids.append(f"movie_{i}")
         vectors.append(item["vector"])
         
@@ -75,9 +83,21 @@ def query_movies(query_text: str, n_results: int = 5, collection_name: str = "mo
     ChromaDB에서 쿼리와 유사한 영화를 검색합니다.
     """
     from utils.text_vectorizer import text_to_vector
+    import os
     
     client = chromadb.PersistentClient(path=persist_directory)
-    collection = client.get_collection(name=collection_name)
+    
+    try:
+        collection = client.get_collection(name=collection_name)
+    except Exception:
+        # If collection doesn't exist, try to initialize it
+        csv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "dataset/movie_data.csv")
+        if os.path.exists(csv_path):
+            print(f"Collection '{collection_name}' not found in query_movies. Initializing from {csv_path}...")
+            save_movies_to_chroma(csv_path, collection_name, persist_directory)
+            collection = client.get_collection(name=collection_name)
+        else:
+            raise chromadb.errors.NotFoundError(f"Collection [{collection_name}] does not exist and dataset not found at {csv_path}")
     
     query_vector = text_to_vector(query_text)
     
