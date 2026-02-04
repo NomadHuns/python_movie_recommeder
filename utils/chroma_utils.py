@@ -83,7 +83,8 @@ def query_movies(
     n_results: int = 5, 
     collection_name: str = "movies", 
     persist_directory: str = "./chroma_db",
-    where: Dict[str, Any] = None
+    where: Dict[str, Any] = None,
+    **kwargs
 ):
     """
     ChromaDB에서 쿼리와 유사한 영화를 검색합니다.
@@ -110,7 +111,8 @@ def query_movies(
     results = collection.query(
         query_embeddings=[query_vector],
         n_results=n_results,
-        where=where
+        where=where,
+        where_document=kwargs.get("where_document")
     )
     return results
 
