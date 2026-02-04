@@ -25,6 +25,11 @@ python3 utils/chroma_utils.py
 export PYTHONPATH=$PYTHONPATH:$(pwd) && ./venv/bin/python3 utils/chroma_utils.py
 ```
 
+## 서버 실행 명령어
+```bash
+uvicorn main:app --reload
+```
+
 ## 영화 추천 API (`/test`)
 
 사용자가 영화 추천 질문을 쿼리 스트링으로 보내면, 벡터 검색을 통해 가장 유사한 영화 5개를 JSON 형태로 반환합니다.
