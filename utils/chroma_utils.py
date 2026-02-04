@@ -78,7 +78,13 @@ def save_movies_to_chroma(
 
     print("Successfully saved to ChromaDB.")
 
-def query_movies(query_text: str, n_results: int = 5, collection_name: str = "movies", persist_directory: str = "./chroma_db"):
+def query_movies(
+    query_text: str, 
+    n_results: int = 5, 
+    collection_name: str = "movies", 
+    persist_directory: str = "./chroma_db",
+    where: Dict[str, Any] = None
+):
     """
     ChromaDB에서 쿼리와 유사한 영화를 검색합니다.
     """
@@ -103,7 +109,8 @@ def query_movies(query_text: str, n_results: int = 5, collection_name: str = "mo
     
     results = collection.query(
         query_embeddings=[query_vector],
-        n_results=n_results
+        n_results=n_results,
+        where=where
     )
     return results
 
